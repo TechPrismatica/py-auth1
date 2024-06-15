@@ -1,0 +1,105 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "tp_auth_jwt/__version__.py"
+
+[tool.hatch.build.targets.sdist]
+include = ["/tp_auth_jwt"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[project]
+name = "tp-auth-jwt"
+dynamic = ["version"]
+description = "Security Utility for TechPrismatica Core Projects"
+readme = "README.md"
+requires-python = ">=3.12.3"
+authors = [
+    { name = "Faizan Azim", email = "faizanazim11@gmail.com"}
+]
+
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Plugins",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: Implementation :: PyPy",
+]
+
+dependencies = [
+    "fastapi>=0.95.2",
+    "pydantic>=1.7.4,!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0",
+    "python-dotenv>=1.0.0",
+    "PyJWT>=2.8.0",
+    "orjson>=3.9.2",
+    "httpx>=0.25.0",
+    "tp-redis-connector",
+    "uvicorn[standard]>=0.23.0",
+    "cryptography>=41.0.4",
+]
+
+[tool.build-system]
+name = "myjwtapi"
+version = "0.1"
+url = "https://github.com/yourusername/myjwtapi"
+
+[tool.ruff]
+lint.select = [
+    "E", # pycodestyle errors
+    "W", # pycodestyle warnings
+    "F", # pyflakes
+    "I", # isort
+    "C", # flake8-comprehensions
+    "B", # flake8-bugbear
+]
+lint.ignore = [
+    "E501", # line too long, handled by black
+    "B008", # do not perform function calls in argument defaults
+    "C901", # too complex
+    "E402",
+    "B904",
+    "B905",
+    "B009",
+    "C417"
+
+]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[tool.ruff.lint.pyupgrade]
+keep-runtime-typing = true
+
+
+[tool.mypy]
+warn_unused_ignores = true
+warn_redundant_casts = true
+show_error_codes = true
+disallow_untyped_defs = true
+ignore_missing_imports = true
+follow_imports = "silent"
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+check_untyped_defs = true
+
+
+[tool.coverage.report]
+precision = 2
+fail_under = 81.75
+show_missing = true
+skip_covered = true
+exclude_lines = [
+    "pragma: no cover",
+    "pragma: nocover",
+    "if TYPE_CHECKING:",
+    "if typing.TYPE_CHECKING:",
+    "raise NotImplementedError",
+]
