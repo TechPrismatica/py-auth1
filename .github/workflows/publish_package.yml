@@ -26,7 +26,7 @@ jobs:
             name: python-package-distributions
             path: dist/
         - name: Add PyPI Config
-          run: echo ${{ secrets.PYRC_CONFIG }} > ~/.pypirc
+          run: echo ${{ secrets.PYRC_CONFIG }} | base64 -d > ~/.pypirc
         - name: Publish package to PyPI
           run: twine upload --repository forwarder dist/*
     
