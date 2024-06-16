@@ -1,7 +1,8 @@
 name: Build and Publish Package
 
 on:
-  push
+  push:
+    tags: '*'
 
 jobs:
     build-and-publish:
