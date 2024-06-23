@@ -1,9 +1,19 @@
 from enum import StrEnum
-from typing import Optional
+from typing import Any, Optional
 
 from fastapi.security import OAuth2PasswordBearer
-from pydantic import Field, model_validator
+from pydantic import BeforeValidator, Field, model_validator
 from pydantic_settings import BaseSettings
+from typing_extensions import Annotated
+
+
+def options_decoder(v):
+    if isinstance(v, str):
+        return v.split(",")
+    return v
+
+
+OptionsType = Annotated[Any, BeforeValidator(options_decoder)]
 
 
 class SupportedAlgorithms(StrEnum):
@@ -15,6 +25,14 @@ class _Service(BaseSettings):
     name: Optional[str] = Field("tp-auth-jwt", env="SERVICE_NAME")
     port: Optional[int] = Field(5678, env="PORT")
     host: Optional[str] = Field("0.0.0.0", env="HOST")
+    docs_url: Optional[str] = Field("/docs", env="DOCS_URL")
+    redoc_url: Optional[str] = Field("/redoc", env="REDOC_URL")
+    openapi_url: Optional[str] = Field("/openapi.json", env="OPENAPI_URL")
+    enable_cors: Optional[bool] = True
+    cors_urls: OptionsType = ["*.prismatica.in"]
+    cors_allow_credentials: bool = True
+    cors_allow_methods: OptionsType = ["GET", "POST", "DELETE", "PUT"]
+    cors_allow_headers: OptionsType = ["*"]
 
 
 class _Secrets(BaseSettings):
