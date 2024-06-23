@@ -10,10 +10,12 @@ class SupportedAlgorithms(StrEnum):
     HS256 = "HS256"
     RS256 = "RS256"
 
+
 class _Service(BaseSettings):
     name: Optional[str] = Field("tp-auth-jwt", env="SERVICE_NAME")
     port: Optional[int] = Field(5678, env="PORT")
     host: Optional[str] = Field("0.0.0.0", env="HOST")
+
 
 class _Secrets(BaseSettings):
     public_key: Optional[str] = Field(None, env="PUBLIC_KEY")
@@ -38,7 +40,6 @@ class _Secrets(BaseSettings):
             if not values["secret_key"]:
                 raise ValueError("Secret key must be provided for HS256 algorithm")
         return values
-
 
 
 Secrets = _Secrets()

@@ -19,7 +19,6 @@ class JWTUtil:
             self.read_key = read_key or Secrets.secret_key
             self.write_key = write_key or Secrets.secret_key
 
-
     def encode(self, payload: dict) -> str:
         try:
             payload |= {"iss": Secrets.issuer, "exp": datetime.utcnow() + datetime.timedelta(minutes=Secrets.expiry)}
