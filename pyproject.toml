@@ -3,18 +3,18 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.version]
-path = "tp_auth_jwt/__version__.py"
+path = "tp_auth/__version__.py"
 
 [tool.hatch.build.targets.sdist]
-include = ["/tp_auth_jwt"]
+include = ["/tp_auth"]
 
 [tool.hatch.metadata]
 allow-direct-references = true
 
 [project]
-name = "tp-auth-jwt"
+name = "tp-auth"
 dynamic = ["version"]
-description = "Security Utility for TechPrismatica Core Projects"
+description = "Security Utility for TechPrismatica Projects"
 readme = "README.md"
 requires-python = ">=3.12.3"
 authors = [
@@ -37,7 +37,6 @@ dependencies = [
     "PyJWT>=2.8.0",
     "orjson>=3.9.2",
     "httpx>=0.25.0",
-    "tp-redis-connector",
     "uvicorn[standard]>=0.23.0",
     "cryptography>=41.0.4",
 ]
