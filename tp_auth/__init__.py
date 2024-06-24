@@ -1,5 +1,5 @@
 from tp_auth.auth.auth_validator import AuthValidator, AuthValidatorInstance, UserInfo
-from tp_auth.auth.requestor import TPRequestor
+from tp_auth.auth.requestor import TPRequestor, TPRequestorInstance
 from tp_auth.auth.schemas import Token
 from tp_auth.auth.user_specs import UserInfoSchema
 from tp_auth.config import Secrets, SupportedAlgorithms
@@ -10,6 +10,7 @@ __all__ = [
     "AuthValidator",
     "AuthValidatorInstance",
     "TPRequestor",
+    "TPRequestorInstance",
     "UserInfo",
     "Secrets",
     "SupportedAlgorithms",

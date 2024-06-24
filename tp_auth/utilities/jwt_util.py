@@ -1,5 +1,5 @@
-from datetime import datetime, timedelta
 import logging
+from datetime import UTC, datetime, timedelta
 
 import jwt
 
@@ -7,7 +7,14 @@ from tp_auth.config import Secrets, SupportedAlgorithms
 
 
 class JWTUtil:
-    def __init__(self, algorithm: SupportedAlgorithms = None, write_key: str = None, read_key: str = None) -> None:
+    def __init__(
+        self,
+        token_type: str = "access",
+        algorithm: SupportedAlgorithms = None,
+        write_key: str = None,
+        read_key: str = None,
+    ) -> None:
+        self.token_type = token_type
         self.algorithm = algorithm or Secrets.algorithm
         if self.algorithm == SupportedAlgorithms.RS256:
             self.read_key = read_key or Secrets.public_key
@@ -19,9 +26,14 @@ class JWTUtil:
             self.read_key = read_key or Secrets.secret_key
             self.write_key = write_key or Secrets.secret_key
 
-    def encode(self, payload: dict) -> str:
+    def encode(self, payload: dict, exp_time: int = None) -> str:
         try:
-            payload |= {"iss": Secrets.issuer, "exp": datetime.utcnow() + timedelta(minutes=Secrets.expiry)}
+            payload |= {
+                "iss": Secrets.issuer,
+                "exp": datetime.now(UTC) + timedelta(minutes=exp_time or Secrets.expiry),
+                "iat": datetime.now(UTC),
+                "token_type": self.token_type,
+            }
             return jwt.encode(payload, self.write_key, algorithm=self.algorithm)
         except Exception as e:
             logging.error(f"Error encoding token: {e}")
