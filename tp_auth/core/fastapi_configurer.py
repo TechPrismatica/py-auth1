@@ -72,7 +72,7 @@ def add_health_check(app: FastAPI, project_name: str) -> FastAPI:
 
 
 def add_security(app: FastAPI, routers: list[APIRouter]) -> FastAPI:
-    [app.include_router(router, dependencies=AuthValidatorInstance) for router in routers]
+    [app.include_router(router, dependencies=[Depends(AuthValidatorInstance)]) for router in routers]
     return app
 
 
@@ -100,7 +100,7 @@ def add_token_route(app: FastAPI, handler: Callable, asynced: bool = False) -> F
 
 def add_refresh_route(app: FastAPI, handler: Callable, asynced: bool = False) -> FastAPI:
     @app.post("/refresh", response_model=Token)
-    async def refresh(refresh_token: Annotated[str, Depends(Cookie())]) -> Token:
+    async def refresh(refresh_token: Annotated[str, Cookie()]) -> Token:
         if asynced:
             return await handler(refresh_token)
         return handler(refresh_token)
@@ -123,7 +123,7 @@ def generate_fastapi_app(
         root_path=app_config.root_path,
         openapi_url=app_config.openapi_url,
         docs_url=app_config.docs_url,
-        redoc_url=app_config.redoc,
+        redoc_url=app_config.redoc_url,
     )
     app.openapi = get_custom_api(app, app_config, disable_operation_default)
     app = add_health_check(app, project_name)
