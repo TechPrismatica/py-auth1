@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, timedelta
 import logging
 
 import jwt
@@ -21,7 +21,7 @@ class JWTUtil:
 
     def encode(self, payload: dict) -> str:
         try:
-            payload |= {"iss": Secrets.issuer, "exp": datetime.utcnow() + datetime.timedelta(minutes=Secrets.expiry)}
+            payload |= {"iss": Secrets.issuer, "exp": datetime.utcnow() + timedelta(minutes=Secrets.expiry)}
             return jwt.encode(payload, self.write_key, algorithm=self.algorithm)
         except Exception as e:
             logging.error(f"Error encoding token: {e}")

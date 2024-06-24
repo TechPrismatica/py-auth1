@@ -26,6 +26,7 @@ class AuthValidator:
         )
         try:
             payload = self.jwt_utils.decode(token)
+            print(payload)
             user_info = UserInfoSchema(**payload)
             available_scopes = user_info.scopes
         except (jwt.ExpiredSignatureError, jwt.InvalidTokenError, jwt.InvalidSignatureError):

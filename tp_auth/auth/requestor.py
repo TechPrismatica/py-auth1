@@ -139,6 +139,6 @@ class TPRequestor:
             return await client.request(**kwargs)
 
 
-TPRequestorInstance = TPRequestor()
+TPRequestorInstance = Depends(TPRequestor)
 
 __all__ = ["TPRequestor", "TPRequestorInstance"]

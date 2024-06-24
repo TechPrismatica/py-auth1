@@ -39,7 +39,7 @@ class _Secrets(BaseSettings):
     public_key: Optional[str] = Field(None, env="PUBLIC_KEY")
     private_key: Optional[str] = Field(None, env="PRIVATE_KEY")
     secret_key: Optional[str] = Field(None, env="SECRET_KEY")
-    algorithm: SupportedAlgorithms = SupportedAlgorithms.HS256
+    algorithm: Optional[SupportedAlgorithms] = Field(default=SupportedAlgorithms.HS256, env="ALGORITHM")
     issuer: Optional[str] = Field("prismaticain", env="ISSUER")
     leeway: Optional[int] = Field(10, env="LEEWAY")
     expiry: Optional[int] = Field(1440, env="EXPIRY")
@@ -50,12 +50,12 @@ class _Secrets(BaseSettings):
     @model_validator(mode="before")
     def check_secrets(cls, values) -> dict:
         if values["algorithm"] == SupportedAlgorithms.RS256:
-            if not values["PUBLIC_KEY"]:
+            if not values.get("public_key"):
                 raise ValueError("Public must be provided for RS256 algorithm")
-            if values["AUTHORIZATION_SERVER"] and not values["PRIVATE_KEY"]:
+            if values["authorization_server"] and not values["private_key"]:
                 raise ValueError("Private key must be provided for RS256 algorithm when used as authorization server")
         elif values["algorithm"] == SupportedAlgorithms.HS256:
-            if not values["secret_key"]:
+            if not values.get("secret_key"):
                 raise ValueError("Secret key must be provided for HS256 algorithm")
         return values
 
