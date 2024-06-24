@@ -22,16 +22,13 @@ class SupportedAlgorithms(StrEnum):
 
 
 class _Service(BaseSettings):
-    name: Optional[str] = Field("tp-auth-jwt", env="SERVICE_NAME")
-    port: Optional[int] = Field(5678, env="PORT")
-    host: Optional[str] = Field("0.0.0.0", env="HOST")
     docs_url: Optional[str] = Field("/docs", env="DOCS_URL")
     redoc_url: Optional[str] = Field("/redoc", env="REDOC_URL")
     openapi_url: Optional[str] = Field("/openapi.json", env="OPENAPI_URL")
     enable_cors: Optional[bool] = True
     cors_urls: OptionsType = ["*.prismatica.in"]
     cors_allow_credentials: bool = True
-    cors_allow_methods: OptionsType = ["GET", "POST", "DELETE", "PUT"]
+    cors_allow_methods: OptionsType = ["GET", "POST", "DELETE", "PUT", "OPTIONS", "PATCH"]
     cors_allow_headers: OptionsType = ["*"]
 
 
@@ -39,7 +36,7 @@ class _Secrets(BaseSettings):
     public_key: Optional[str] = Field(None, env="PUBLIC_KEY")
     private_key: Optional[str] = Field(None, env="PRIVATE_KEY")
     secret_key: Optional[str] = Field(None, env="SECRET_KEY")
-    algorithm: SupportedAlgorithms = SupportedAlgorithms.HS256
+    algorithm: Optional[SupportedAlgorithms] = Field(default=SupportedAlgorithms.HS256, env="ALGORITHM")
     issuer: Optional[str] = Field("prismaticain", env="ISSUER")
     leeway: Optional[int] = Field(10, env="LEEWAY")
     expiry: Optional[int] = Field(1440, env="EXPIRY")
@@ -50,12 +47,20 @@ class _Secrets(BaseSettings):
     @model_validator(mode="before")
     def check_secrets(cls, values) -> dict:
         if values["algorithm"] == SupportedAlgorithms.RS256:
-            if not values["PUBLIC_KEY"]:
+            import base64
+
+            if not values.get("public_key"):
                 raise ValueError("Public must be provided for RS256 algorithm")
-            if values["AUTHORIZATION_SERVER"] and not values["PRIVATE_KEY"]:
+            public_bytes = values["public_key"].encode("utf-8")
+            values["public_key"] = base64.b64decode(public_bytes).decode("utf-8")
+            if values["authorization_server"] and not values["private_key"]:
                 raise ValueError("Private key must be provided for RS256 algorithm when used as authorization server")
+            private_bytes = values.get("private_key")
+            if private_bytes:
+                private_bytes = private_bytes.encode("utf-8")
+                values["private_key"] = base64.b64decode(private_bytes).decode("utf-8")
         elif values["algorithm"] == SupportedAlgorithms.HS256:
-            if not values["secret_key"]:
+            if not values.get("secret_key"):
                 raise ValueError("Secret key must be provided for HS256 algorithm")
         return values
 
