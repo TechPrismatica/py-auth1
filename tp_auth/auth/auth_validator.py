@@ -26,6 +26,8 @@ class AuthValidator:
         )
         try:
             payload = self.jwt_utils.decode(token)
+            if payload.get("token_type") != "access":
+                raise credentials_exception
             user_info = UserInfoSchema(**payload)
             available_scopes = user_info.scopes
         except (jwt.ExpiredSignatureError, jwt.InvalidTokenError, jwt.InvalidSignatureError):

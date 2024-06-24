@@ -31,7 +31,7 @@ class TPRequestor:
     """
 
     def __init__(self, token: Annotated[str, Depends(oauth2_scheme)]) -> None:
-        self._token = token
+        self.__dict__["_token"] = token
 
     @property
     def token(self):
@@ -139,6 +139,6 @@ class TPRequestor:
             return await client.request(**kwargs)
 
 
-TPRequestorInstance = Depends(TPRequestor)
+TPRequestorInstance = Annotated[TPRequestor, Depends(TPRequestor)]
 
 __all__ = ["TPRequestor", "TPRequestorInstance"]
